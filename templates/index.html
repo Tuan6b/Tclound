@@ -6,7 +6,8 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
+            background: rgb(17,0,36);
+            background: linear-gradient(90deg, rgba(17,0,36,1) 0%, rgba(56,8,129,1) 26%, rgba(8,31,176,1) 58%, rgba(0,212,255,1) 100%);
         }
         .container {
             max-width: 800px;
@@ -20,27 +21,35 @@
         .upload-form {
             margin-bottom: 20px;
         }
-        .file-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 10px;
         }
-        .file-list li {
-            padding: 10px;
-            border-bottom: 1px solid #ccc;
+        .file-icon {
+            width: 100px;
+            height: 100px;
+            background-color: #f7f7f7;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        .file-list li:last-child {
-            border-bottom: none;
+        .file-icon img {
+            width: 50px;
+            height: 50px;
+            margin: 20px;
         }
-        .file-list a {
+        .file-icon a {
             text-decoration: none;
             color: #337ab7;
         }
-        .file-list a:hover {
+        .file-icon a:hover {
             color: #23527c;
         }
         .btn {
-            background-color: #4CAF50;
+            background-color: #3857ac;
             color: #fff;
             padding: 10px 20px;
             border: none;
@@ -60,11 +69,29 @@
             <input type="submit" value="Upload" class="btn">
         </form>
         <h2>Files:</h2>
-        <ul class="file-list">
+        <div class="file-grid">
         {% for file in files %}
-            <li><a href="{{ url_for('download_file', filename=file) }}">{{ file }}</a></li>
+            {% if file.endswith(('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.ico')) %}
+                <div class="file-icon">
+                    <a href="{{ url_for('download_file', filename=file) }}">
+                        <img src="{{ url_for('thumbnail_image', filename=file) }}" alt="{{ file }}">
+                    </a>
+                </div>
+            {% elif file.endswith(('.mp4', '.avi', '.mov', '.wmv', '.flv')) %}
+                <div class="file-icon">
+                    <a href="{{ url_for('download_file', filename=file) }}">
+                        <img src="{{ url_for('video_thumbnail', filename=file) }}" alt="{{ file }}">
+                    </a>
+                </div>
+            {% else %}
+                <div class="file-icon">
+                    <a href="{{ url_for('download_file', filename=file) }}">
+                        <img src="{{ url_for('file_icon', filename=file) }}" alt="{{ file }}">
+                    </a>
+                </div>
+            {% endif %}
         {% endfor %}
-        </ul>
+        </div>
     </div>
 </body>
 </html>
